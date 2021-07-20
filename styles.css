@@ -1,0 +1,26 @@
+body{
+  height: 100%;
+  overflow: hidden;
+}
+
+.canvasDIV{
+  width: 50%;
+  float: left;
+  margin-top: -5px;
+}
+
+.canvas{
+  display: block;
+  margin: 0 auto;
+}
+
+.scoreBox{
+  border: 3px solid black;
+  width: 250px;
+  height: 75px;
+  float: left;
+  font-size: 30px;
+  text-align: center;
+  padding: 50px 15px 15px 15px;
+  margin-top: 75px;
+}

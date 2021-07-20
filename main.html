@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="C:/Users/nicho_oiubopp/OneDrive/Documents/Tetris/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    <div>
+      <div class="canvasDIV">
+        <canvas id="myCanvas" class="canvas" width="360" height="570"></canvas>
+      </div>
+      <div id="scoreBox" class="scoreBox" style=""></div>
+    </div>
+    <script>
+    	var canvas = document.getElementById("myCanvas")
+      var ctx = canvas.getContext("2d")
+      var blocks = []
+      for(let y = 0; y < 19; y++){
+        blocks.push([])
+        for(let x = 0; x < 12; x++){
+          blocks[y].push({x:x, y:y})
+          if(x == 0 || x == 11 || y == 0 || y == 18){
+            blocks[y][x].type = "border"
+            blocks[y][x].color = "gray"
+          }
+          else{
+            blocks[y][x].type = "empty"
+            blocks[y][x].color = "black"
+          }
+        }
+      }
+      var pieces = [{
+          //I block
+          top: 1,
+          bottom: 2,
+          left: 0,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "aqua"
+        },
+        {//L block
+          top: 1,
+          bottom: 1,
+          left: 0,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 1,
+          color: "darkorange"
+        },
+        {//J block
+          top: 1,
+          bottom: 1,
+          left: 0,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 1,
+          bottomRight: 0,
+          color: "blue"
+        },
+        {//T block
+          top: 1,
+          bottom: 0,
+          left: 1,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "deeppink"
+        },
+        {//O block
+          top: 0,
+          bottom: 1,
+          left: 1,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 1,
+          bottomRight: 0,
+          color: "yellow"
+        },
+        {//S block
+          top: 0,
+          bottom: 1,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 1,
+          bottomRight: 0,
+          color: "lime"
+        },
+        {//Z block
+          top: 0,
+          bottom: 1,
+          left: 1,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 1,
+          color: "red"
+        },
+        {//I block 1R
+          top: 0,
+          bottom: 0,
+          left: 2,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "aqua"
+        },
+        {//L block 1R
+          top: 0,
+          bottom: 0,
+          left: 1,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 1,
+          bottomRight: 0,
+          color: "darkorange"
+        },
+        {//J block 1R
+          top: 0,
+          bottom: 0,
+          left: 1,
+          right: 1,
+          topLeft: 1,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "blue"
+        },
+        {//T block 1R
+          top: 1,
+          bottom: 1,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "deeppink"
+        },
+        {//O block 1R
+          top: 1,
+          bottom: 0,
+          left: 1,
+          right: 0,
+          topLeft: 1,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "yellow"
+        },
+        {//S block 1R
+          top: 0,
+          bottom: 1,
+          left: 1,
+          right: 0,
+          topLeft: 1,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "lime"
+        },
+        {//Z block 1R
+          top: 1,
+          bottom: 0,
+          left: 1,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 1,
+          bottomRight: 0,
+          color: "red"
+        },
+        {//I block 2R
+          top: 2,
+          bottom: 1,
+          left: 0,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "aqua"
+        },
+        {//L block 2R
+          top: 1,
+          bottom: 1,
+          left: 0,
+          right: 0,
+          topLeft: 1,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "darkorange"
+        },
+        {//J block 2R
+          top: 1,
+          bottom: 1,
+          left: 0,
+          right: 0,
+          topLeft: 0,
+          topRight: 1,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "blue"
+        },
+        {//T block 2R
+          top: 0,
+          bottom: 1,
+          left: 1,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "deeppink"
+        },
+        {//O block 2R
+          top: 1,
+          bottom: 0,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 1,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "yellow"
+        },
+        {//S block 2R
+          top: 1,
+          bottom: 0,
+          left: 1,
+          right: 0,
+          topLeft: 0,
+          topRight: 1,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "lime"
+        },
+        {//Z block 2R
+          top: 1,
+          bottom: 0,
+          left: 0,
+          right: 1,
+          topLeft: 1,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "red"
+        },
+        {//I block 3R
+          top: 0,
+          bottom: 0,
+          left: 1,
+          right: 2,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "aqua"
+        },
+        {//L block 3R
+          top: 0,
+          bottom: 0,
+          left: 1,
+          right: 1,
+          topLeft: 0,
+          topRight: 1,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "darkorange"
+        },
+        {//J block 3R
+          top: 0,
+          bottom: 0,
+          left: 1,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 1,
+          color: "blue"
+        },
+        {//T block 3R
+          top: 1,
+          bottom: 1,
+          left: 1,
+          right: 0,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "deeppink"
+        },
+        {//O block 3R
+          top: 0,
+          bottom: 1,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 1,
+          color: "yellow"
+        },
+        {//S block 3R
+          top: 1,
+          bottom: 0,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 0,
+          bottomLeft: 0,
+          bottomRight: 1,
+          color: "lime"
+        },
+        {//Z block 3R
+          top: 0,
+          bottom: 1,
+          left: 0,
+          right: 1,
+          topLeft: 0,
+          topRight: 1,
+          bottomLeft: 0,
+          bottomRight: 0,
+          color: "red"
+        }
+      ]
+      function getRandInt(max){
+        return Math.floor(Math.random() * max)
+      }
+      function empty(x, y){
+        if(y>0){
+          blocks[y][x].type = "empty"
+          blocks[y][x].color = "black"
+        }
+        else{
+          blocks[y][x].type = "border"
+          blocks[y][x].color = "gray"
+        }
+      }
+      function checkMain(){
+        shape = main.shape
+        if(blocks[main.y][main.x].type != "empty"){
+          return false
+        }
+        for(let i = 0; i <= pieces[shape].top; i++){
+          if(main.y-i > 0){
+            if(blocks[main.y-i][main.x].type != "empty"){
+              return false
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topLeft; i++){
+          if(main.y-i > 0){
+            if(blocks[main.y-i][main.x-i].type != "empty"){
+              return false
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topRight; i++){
+          if(main.y-i > 0){
+            if(blocks[main.y-i][main.x+i].type != "empty"){
+              return false
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[shape].left; i++){
+          if(blocks[main.y][main.x-i].type != "empty"){
+            return false
+          }
+        }
+        for(let i = 0; i <= pieces[shape].right; i++){
+          if(blocks[main.y][main.x+i].type != "empty"){
+            return false
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottom; i++){
+          if(blocks[main.y+i][main.x].type != "empty"){
+            return false
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottomLeft; i++){
+          if(blocks[main.y+i][main.x-i].type != "empty"){
+            return false
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottomRight; i++){
+          if(blocks[main.y+i][main.x+i].type != "empty"){
+            return false
+          }
+        }
+        return true
+      }
+      function makeMain(){
+        shape = main.shape
+        blocks[main.y][main.x].color = main.color
+        for(let i = 0; i <= pieces[shape].top; i++){
+          if(main.y-i > 0){
+            blocks[main.y-i][main.x].color = main.color
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topLeft; i++){
+          if(main.y-i > 0){
+            blocks[main.y-i][main.x-i].color = main.color
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topRight; i++){
+          if(main.y-i > 0){
+            blocks[main.y-i][main.x+i].color = main.color
+          }
+        }
+        for(let i = 0; i <= pieces[shape].left; i++){
+          blocks[main.y][main.x-i].color = main.color
+        }
+        for(let i = 0; i <= pieces[shape].right; i++){
+          blocks[main.y][main.x+i].color = main.color
+        }
+        for(let i = 0; i <= pieces[shape].bottom; i++){
+          blocks[main.y+i][main.x].color = main.color
+        }
+        for(let i = 0; i <= pieces[shape].bottomLeft; i++){
+          blocks[main.y+i][main.x-i].color = main.color
+        }
+        for(let i = 0; i <= pieces[shape].bottomRight; i++){
+          blocks[main.y+i][main.x+i].color = main.color
+        }
+        return true
+      }
+      function newPiece(){
+        main.y = 0
+        main.x = 6
+        shape = main.shape
+        if(shape >= 7){
+          while(shape >= 7){
+            shape -= 7
+          }
+          main.shape = shape
+        }
+        while(main.shape == shape){
+          main.shape = getRandInt(7)
+          main.color = pieces[main.shape].color
+        }
+      }
+      function fillMain(){
+        shape = main.shape
+        for(let i = 0; i <= pieces[shape].top; i++){
+          blocks[main.y-i][main.x].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].topLeft; i++){
+          blocks[main.y-i][main.x-i].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].topRight; i++){
+          blocks[main.y-i][main.x+i].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].left; i++){
+          blocks[main.y][main.x-i].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].right; i++){
+          blocks[main.y][main.x+i].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].bottom; i++){
+          blocks[main.y+i][main.x].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].bottomLeft; i++){
+          blocks[main.y+i][main.x-i].type = "filled"
+        }
+        for(let i = 0; i <= pieces[shape].bottomRight; i++){
+          blocks[main.y+i][main.x+i].type = "filled"
+        }
+      }
+      function emptyMain(){
+        shape = main.shape
+        for(let i = 0; i <= pieces[shape].top; i++){
+          if(main.y - i > 0){
+            empty(main.x,main.y-i)
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topLeft; i++){
+          if(main.y - i > 0){
+            empty(main.x-i,main.y-i)
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topRight; i++){
+          if(main.y - i > 0){
+            empty(main.x+i,main.y-i)
+          }
+        }
+        for(let i = 0; i <= pieces[shape].left; i++){
+          empty(main.x-i,main.y)
+        }
+        for(let i = 0; i <= pieces[shape].right; i++){
+          empty(main.x+i,main.y)
+        }
+        for(let i = 0; i <= pieces[shape].bottom; i++){
+          empty(main.x,main.y+i)
+        }
+        for(let i = 0; i <= pieces[shape].bottomLeft; i++){
+          empty(main.x-i,main.y+i)
+        }
+        for(let i = 0; i <= pieces[shape].bottomRight; i++){
+          empty(main.x+i,main.y+i)
+        }
+      }
+      function dropMain(){
+        emptyMain()
+        main.y++
+        makeMain()
+        draw()
+      }
+      function rotateMain(){
+        originalShape = main.shape
+        main.shape += 7
+        if(main.shape >= 28){
+          main.shape -= 28
+        }
+        shape = main.shape
+        for(let i = 0; i <= pieces[shape].top; i++){
+          if(blocks[main.y-i][main.x].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topLeft; i++){
+          if(blocks[main.y-i][main.x-i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].topRight; i++){
+          if(blocks[main.y-i][main.x+i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].left; i++){
+          if(blocks[main.y][main.x-i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].right; i++){
+          if(blocks[main.y][main.x+i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottom; i++){
+          if(blocks[main.y+i][main.x].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottomLeft; i++){
+          if(blocks[main.y+i][main.x-i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+        for(let i = 0; i <= pieces[shape].bottomRight; i++){
+          if(blocks[main.y+i][main.x+i].type != "empty"){
+            main.shape = originalShape
+            return
+          }
+        }
+      }
+      function draw(){
+        for(let y = 0; y < 19; y++){
+          for(let x = 0; x < 12; x++){
+            ctx.clearRect(x*sz, y*sz, sz, sz)
+            ctx.beginPath()
+            ctx.rect(sz*x,sz*y,sz,sz)
+            ctx.fillStyle = blocks[y][x].color
+            ctx.fill()
+            ctx.closePath()
+          }
+        }
+      }
+      function checkIfDead(){
+        if(main.y == 0){
+          return true
+        }
+        if(main.y - pieces[main.shape].top <= 0){
+          return true
+        }
+        if(main.y - pieces[main.shape].topLeft <= 0){
+          return true
+        }
+        if(main.y - pieces[main.shape].topRight <= 0){
+          return true
+        }
+        return false
+      }
+      function dropRow(row){
+        for(let y = 18; y >= 0; y--){
+          for(let x = 0; x < 12; x++){
+            if(y>=row){
+              if(y>1){
+                blocks[y][x].type = blocks[y-1][x].type
+                blocks[y][x].color = blocks[y-1][x].color
+              }
+              else if(y==1){
+                empty(x,y)
+              }
+            }
+          }
+        }
+      }
+      function scoreRows(){
+        var filled
+        var scoreCount = 0
+        for(let y = 0; y < 19; y++){
+          filled = true
+          for(let x = 0; x < 12; x++){
+            if(blocks[y][x].type == "empty" || y == 0 || y == 18 || x == 0 || x == 11){
+              filled = false
+            }
+          }
+          if(filled){
+            scoreCount += 1
+            dropRow(y)
+            y--
+          }
+        }
+        if(scoreCount < 4){
+          score += scoreCount*100
+        }
+        else{
+          score += 800
+        }
+        updateScore()
+      }
+      function updateScore(){
+        document.getElementById("scoreBox").innerHTML = "Score: " + score
+      }
+      var shape = getRandInt(7)
+      var main = {x:6, y:0, color:pieces[shape].color, shape:shape}
+      const sz = 30
+      var fallTime = 500
+      var score = 0
+      updateScore()
+      function game(){
+        var fallen = false
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        makeMain()
+        draw()
+        if(blocks[main.y+1][main.x].type != "empty"){
+          fallen = true
+          blocks[main.y][main.x].type = "filled"
+          fillMain()
+        }
+        for(let i = 0; i <= pieces[main.shape].topLeft; i++){
+          if(blocks[main.y-i+1][main.x-i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].topRight; i++){
+          if(blocks[main.y-i+1][main.x+i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].left; i++){
+          if(blocks[main.y+1][main.x-i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].right; i++){
+          if(blocks[main.y+1][main.x+i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].bottom; i++){
+          if(blocks[main.y+i+1][main.x].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].bottomLeft; i++){
+          if(blocks[main.y+i+1][main.x-i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        for(let i = 0; i <= pieces[main.shape].bottomRight; i++){
+          if(blocks[main.y+i+1][main.x+i].type != "empty"){
+            if(!fallen){
+              fallen = true
+              fillMain()
+            }
+          }
+        }
+        if(fallen){
+          if(checkIfDead()){
+            score = "DEAD!!!"
+            updateScore()
+            return
+          }
+          scoreRows()
+          newPiece()
+        }
+        if(!fallen){
+          dropMain()
+        }
+        setTimeout(game,fallTime)
+      }
+      var downArrow
+      var fired
+      document.addEventListener("keydown", function(e){
+        if(!fired && main.y > 0){
+          fired = true
+          downArrow = false
+          var key = e.key
+          if(key == "ArrowLeft" && blocks[main.y][main.x-1].type=="empty"){
+            emptyMain()
+            main.x--
+            if(!checkMain()){
+              main.x++
+            }
+            makeMain()
+            draw()
+          }
+          if(key == "ArrowRight" && blocks[main.y][main.x+1].type=="empty"){
+            emptyMain()
+            main.x++
+            if(!checkMain()){
+              main.x--
+            }
+            makeMain()
+            draw()
+          }
+          if(key == "ArrowDown"){
+            fallTime -= 400
+            downArrow = true
+          }
+          if(key == "ArrowUp"){
+            emptyMain()
+            rotateMain()
+            makeMain()
+            draw()
+          }
+        }
+      })
+      document.addEventListener("keyup", function(e){
+        fired = false
+        if(downArrow){
+          fallTime += 400
+          downArrow = false
+        }
+      })
+      game()
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    </script>
+  </body>
+</html>
